@@ -18,6 +18,7 @@ func InitTotalResult() TotalResult {
 	return TotalResult{}
 }
 
+// TODO: move this func to output pkg
 func (t *TotalResult) Print() {
 	fmt.Printf("Scanned:     %d\n", t.Scanned.Load())
 	fmt.Printf("Opened:      %d\n", t.Opened.Load())

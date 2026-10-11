@@ -1,6 +1,7 @@
 package main
 
 import (
+	"NetSeeker/internal/output"
 	"NetSeeker/internal/scanner"
 	"context"
 	"flag"
@@ -9,33 +10,6 @@ import (
 	"sync"
 	"time"
 )
-
-func printLogo() {
-	fmt.Printf(
-		"  ▄        ▄  ▄                 ▄      ▄  ▄     ▄  ▄     ▄    ▄   ▄  ▄     ▄  ▄  \n" +
-			"▄██ ▄█▄  ▄██▄▀██  ▀███  ███▀  ▄▀██▄  ▄██▄▀██  ▄██▄▀██  ▄██  ▄██ ▄██▄▀██  ▄██▄▀██ \n" +
-			" █░▀ ▀░█  █░   ▀    ▀  ░ ▀   █░  ▀██  █░   ▀   █░   ▀   █░   ░█  █░   ▀   █░   ░█\n" +
-			" ▒▓   ▒▓  ▒▓          ▒▓     ▒▓   ▀▀  ▒▓       ▒▓       ▒▓   ▒   ▒▓       ▒▓   ▒ \n" +
-			" ▀▀   ▀▀  ▀▀▀▀▀       ▀▀      ▀▀      ▀▀▀▀▀    ▀▀▀▀▀    ▀▀▀▀▀    ▀▀▀▀▀    ▀▀▀▀▀  \n" +
-			" ░░   ░░  ░░          ░░        ▀░▄   ░░       ░░       ░░   ░   ░░       ░░  ░  \n" +
-			" ▒▒   ▒▒  ▒▒          ▒▒          ▒▒  ▒▒       ▒▒       ▒▒   ▒▒  ▒▒       ▒▒  ▒▒ \n" +
-			" ▓▓   ▓▓  ▓▓▄  ▓▓     ▓▓▄    ▓▓▄  ▓▓  ▓▓▄  ▓▓  ▓▓▄  ▓▓  ▓▓   ▓▓  ▓▓▄  ▓▓  ▓▓  ▓▓ \n" +
-			"▀██  ▀██   ▀██▄▀      █▀      ▀██▄▀    ▀██▄▀    ▀██▄▀  ▀██  ▀██   ▀██▄▀  ▀██ ▀██ \n" +
-			"  ▀    ▀     ▀       ▀          ▀        ▀        ▀      ▀    ▀     ▀      ▀   ▀ \n")
-	fmt.Println("                                                                        by prikin")
-}
-
-// TODO: create Output domain and place all print shit into it
-func printInfo(n int, p int, t int, timeout time.Duration) {
-	fmt.Printf("NetSeeker v0.1\n")
-	fmt.Printf("Port scanner\n")
-	fmt.Printf("\nTarget: random IPv4\n")
-	fmt.Printf("Targets: %d\n", n)
-	fmt.Printf("Port:    %d\n", p)
-	fmt.Printf("Workers: %d\n", t)
-	fmt.Printf("Timeout: %v\n", timeout)
-	fmt.Printf("\n--------------------------------------------------------------------------------\n\n")
-}
 
 func main() {
 	numIPs := flag.Int("n", 1, "Number of IP addresses to gather")
@@ -53,8 +27,8 @@ func main() {
 	d := net.Dialer{Timeout: *timeout}
 	s := scanner.InitScanner(d)
 
-	printLogo()
-	printInfo(*numIPs, *port, *numThreads, *timeout)
+	output.PrintLogo()
+	output.PrintInfo(*numIPs, *port, *numThreads, *timeout)
 
 	for i := 0; i < *numThreads; i++ {
 		wg.Add(1)
