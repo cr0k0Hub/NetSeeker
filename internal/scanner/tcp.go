@@ -24,61 +24,51 @@ func generateRandomIP() net.IP {
 	return ip
 }
 
+func defineStatus(err error) string {
+	if errors.Is(err, syscall.ECONNREFUSED) {
+		//s.Result.Closed.Add(1)
+		return "closed"
+	}
+
+	if errors.Is(err, syscall.ECONNRESET) {
+		//s.Result.Closed.Add(1)
+		return "closed"
+	}
+
+	if errors.Is(err, syscall.ENETUNREACH) {
+		//s.Result.Unreachable.Add(1)
+		return "unreachable"
+	}
+
+	if errors.Is(err, syscall.EHOSTUNREACH) {
+		//s.Result.Unreachable.Add(1)
+		return "unreachable"
+
+	}
+
+	if errors.Is(err, syscall.ENETDOWN) {
+		//s.Result.Unreachable.Add(1)
+		return "unreachable"
+	}
+
+	//s.Result.Errors.Add(1)
+	return "error"
+}
+
 func (s *Scanner) Scan(ctx context.Context, target domain.Target) domain.ScanResult {
 	addr := target.Ip.String() + ":" + strconv.Itoa(target.Port)
 	conn, err := s.d.DialContext(ctx, "tcp", addr)
-	s.Result.Scanned.Add(1)
-	// TODO: create another func for error definition
+	//s.Result.Scanned.Add(1)
+	// TODO: fix stats count
 	if err != nil {
-		if errors.Is(err, syscall.ECONNREFUSED) {
-			s.Result.Closed.Add(1)
-			return domain.ScanResult{
-				Target: target,
-				Status: "closed",
-			}
-		}
-
-		if errors.Is(err, syscall.ECONNRESET) {
-			s.Result.Closed.Add(1)
-			return domain.ScanResult{
-				Target: target,
-				Status: "closed",
-			}
-		}
-
-		if errors.Is(err, syscall.ENETUNREACH) {
-			s.Result.Unreachable.Add(1)
-			return domain.ScanResult{
-				Target: target,
-				Status: "unreachable",
-			}
-		}
-
-		if errors.Is(err, syscall.EHOSTUNREACH) {
-			s.Result.Unreachable.Add(1)
-			return domain.ScanResult{
-				Target: target,
-				Status: "unreachable",
-			}
-		}
-
-		if errors.Is(err, syscall.ENETDOWN) {
-			s.Result.Unreachable.Add(1)
-			return domain.ScanResult{
-				Target: target,
-				Status: "unreachable",
-			}
-		}
-
-		s.Result.Errors.Add(1)
 		return domain.ScanResult{
 			Target: target,
-			Status: "error",
+			Status: defineStatus(err),
 		}
 	}
 
-	conn.Close()
-	s.Result.Opened.Add(1)
+	defer conn.Close()
+	//s.Result.Opened.Add(1)
 	return domain.ScanResult{
 		Target: target,
 		Status: "opened",
