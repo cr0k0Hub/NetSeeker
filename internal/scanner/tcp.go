@@ -24,34 +24,34 @@ func generateRandomIP() net.IP {
 	return ip
 }
 
-func defineStatus(err error) string {
+func (s *Scanner) defineStatus(err error) string {
 	if errors.Is(err, syscall.ECONNREFUSED) {
-		//s.Result.Closed.Add(1)
+		s.Result.Closed.Add(1)
 		return "closed"
 	}
 
 	if errors.Is(err, syscall.ECONNRESET) {
-		//s.Result.Closed.Add(1)
+		s.Result.Closed.Add(1)
 		return "closed"
 	}
 
 	if errors.Is(err, syscall.ENETUNREACH) {
-		//s.Result.Unreachable.Add(1)
+		s.Result.Unreachable.Add(1)
 		return "unreachable"
 	}
 
 	if errors.Is(err, syscall.EHOSTUNREACH) {
-		//s.Result.Unreachable.Add(1)
+		s.Result.Unreachable.Add(1)
 		return "unreachable"
 
 	}
 
 	if errors.Is(err, syscall.ENETDOWN) {
-		//s.Result.Unreachable.Add(1)
+		s.Result.Unreachable.Add(1)
 		return "unreachable"
 	}
 
-	//s.Result.Errors.Add(1)
+	s.Result.Errors.Add(1)
 	return "error"
 }
 
@@ -63,12 +63,13 @@ func (s *Scanner) Scan(ctx context.Context, target domain.Target) domain.ScanRes
 	if err != nil {
 		return domain.ScanResult{
 			Target: target,
-			Status: defineStatus(err),
+			Status: s.defineStatus(err),
 		}
 	}
 
 	defer conn.Close()
-	//s.Result.Opened.Add(1)
+
+	s.Result.Opened.Add(1)
 	return domain.ScanResult{
 		Target: target,
 		Status: "opened",
