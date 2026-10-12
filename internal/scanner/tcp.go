@@ -5,24 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math/rand"
-	"net"
 	"strconv"
 	"sync"
 	"syscall"
 )
 
 // TODO: rewrite scanner. Targets creates workers and workers do scan shit
-func generateRandomIP() net.IP {
-	ip := make(net.IP, 4)
-
-	ip[0] = byte(rand.Intn(256))
-	ip[1] = byte(rand.Intn(256))
-	ip[2] = byte(rand.Intn(256))
-	ip[3] = byte(rand.Intn(256))
-
-	return ip
-}
 
 func (s *Scanner) defineStatus(err error) string {
 	if errors.Is(err, syscall.ECONNREFUSED) {
@@ -77,6 +65,7 @@ func (s *Scanner) Scan(ctx context.Context, target domain.Target) domain.ScanRes
 	}
 }
 
+// TODO: this looks pretty shitty. Gotta rewrite this
 func (s *Scanner) Worker(ctx context.Context, portsOpen chan<- string, port int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for {
@@ -84,11 +73,9 @@ func (s *Scanner) Worker(ctx context.Context, portsOpen chan<- string, port int,
 		case <-ctx.Done():
 			return
 		default:
-			ip := generateRandomIP()
-			target := domain.Target{
-				Ip:   ip,
-				Port: port,
-			}
+			target := domain.Target{}
+			target.GenerateRandomIP()
+			target.Port = port
 			result := s.Scan(ctx, target)
 			//fmt.Printf("Scanning IP %s:%d STATUS: %s\n", target.Ip, target.Port, result.Status)
 			if result.Status == "opened" {
