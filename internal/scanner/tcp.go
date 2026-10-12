@@ -60,6 +60,7 @@ func (s *Scanner) Scan(ctx context.Context, target domain.Target) domain.ScanRes
 	conn, err := s.d.DialContext(ctx, "tcp", addr)
 	//s.Result.Scanned.Add(1)
 	// TODO: fix stats count
+	s.Result.Scanned.Add(1)
 	if err != nil {
 		return domain.ScanResult{
 			Target: target,
