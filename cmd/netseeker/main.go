@@ -43,5 +43,5 @@ func main() {
 	wg.Wait()
 	close(portsOpen)
 	fmt.Printf("\n--------------------------------------------------------------------------------\n\n")
-	s.Result.Print()
+	output.PrintStats(&s.Result)
 }
