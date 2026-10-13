@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"sync/atomic"
 )
 
@@ -16,14 +15,4 @@ type TotalResult struct {
 
 func InitTotalResult() TotalResult {
 	return TotalResult{}
-}
-
-// TODO: move this func to output pkg
-func (t *TotalResult) Print() {
-	fmt.Printf("Scanned:     %d\n", t.Scanned.Load())
-	fmt.Printf("Opened:      %d\n", t.Opened.Load())
-	fmt.Printf("Closed:      %d\n", t.Closed.Load())
-	fmt.Printf("Timeout:     %d\n", t.Timeout.Load())
-	fmt.Printf("Unreachable: %d\n", t.Unreachable.Load())
-	fmt.Printf("Errors:      %d\n", t.Errors.Load())
 }
